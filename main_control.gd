@@ -1,37 +1,37 @@
 extends Control
 
-# Variables
-var possible_designs = ["Design1", "Design2", "Design3"]
-var possible_materials = ["Leather", "Fabric", "Wood", "Plexiglass", "Cork"]
-var manufacturers = {
+# Variablen
+var possible_designs = ["Design1", "Design2", "Design3"]  # Liste der möglichen Designs
+var possible_materials = ["Leather", "Fabric", "Wood", "Plexiglass", "Cork"]  # Liste der möglichen Materialien
+var manufacturers = {  # Dictionary der Hersteller und deren Modelle
 	"Apple": ["iPhone SE", "iPhone 12", "iPhone 12 Pro", "iPhone 13", "iPhone 13 Pro"],
 	"Samsung": ["Galaxy S21", "Galaxy S21+", "Galaxy Note 20", "Galaxy A52", "Galaxy A72"],
 	"Google": ["Pixel 4", "Pixel 4a", "Pixel 5", "Pixel 5a", "Pixel 6"]
 }
-var phone_orders = {}
-var email_var = ""
-var amount_var = 0
-var manufacturer_var = ""
-var model_var = ""
-var design_var = ""
-var material_var = ""
+var phone_orders = {}  # Dictionary für Telefonbestellungen
+var email_var = ""  # Variable zur Speicherung der E-Mail
+var amount_var = 0  # Variable zur Speicherung der Bestellmenge
+var manufacturer_var = ""  # Variable zur Speicherung des ausgewählten Herstellers
+var model_var = ""  # Variable zur Speicherung des ausgewählten Modells
+var design_var = ""  # Variable zur Speicherung des ausgewählten Designs
+var material_var = ""  # Variable zur Speicherung des ausgewählten Materials
 
-# Email regex for validation
+# Regex zur Validierung der E-Mail-Adresse
 var email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
-# Coordinates and sizes for the camera lenses of various models
+# Koordinaten und Größen für die Kameraobjektive verschiedener Modelle
 var camera_specs = {
 	"iPhone 12": [[148, 45, 265, 145]],
 	"Galaxy S21": [[150, 150, 190, 190]]
 }
 
-# Custom image variables
-var custom_img = null
-var custom_img_opacity = 0.9
-var custom_img_size = Vector2(540, 540)
+# Variablen für benutzerdefinierte Bilder
+var custom_img = null  # Variable für benutzerdefinierte Bilder
+var custom_img_opacity = 0.9  # Variable zur Festlegung der Opazität des benutzerdefinierten Bildes
+var custom_img_size = Vector2(540, 540)  # Variable zur Festlegung der Größe des benutzerdefinierten Bildes
 
 func _ready():
-	# Ensure signals are not connected multiple times
+	# Sicherstellen, dass Signale nicht mehrfach verbunden werden
 	if not $"Buttons/PlaceOrderButton".is_connected("pressed", self._on_place_order):
 		$"Buttons/PlaceOrderButton".connect("pressed", self._on_place_order)
 	if not $"Buttons/SaveOrdersButton".is_connected("pressed", self._on_save_orders):
@@ -47,74 +47,75 @@ func _ready():
 	#if not $"MaterialHBox/Material".is_connected("item_selected", self._on_material_selected):
 		$"MaterialHBox/Material".connect("item_selected", self._on_material_selected)
 	
-	populate_options()
+	
+	populate_options()  # Funktion zum Füllen der Options-Buttons aufrufen
 
-# Function to populate option buttons
+# Funktion zum Füllen der Options-Buttons
 func populate_options():
-	var manufacturer_button = $"MainVBox/ManufacturerHBox/Manufacturer"
-	var design_button = $"MainVBox/DesignHBox/Design"
-	var material_button = $"MainVBox/MaterialHBox/Material"
+	var manufacturer_button = $"MainVBox/ManufacturerHBox/Manufacturer"  # Verweis auf den Hersteller-Options-Button
+	var design_button = $"MainVBox/DesignHBox/Design"  # Verweis auf den Design-Options-Button
+	var material_button = $"MainVBox/MaterialHBox/Material"  # Verweis auf den Material-Options-Button
 
-	# Populate manufacturer options
+	# Herstelleroptionen füllen
 	for manufacturer in manufacturers.keys():
 		manufacturer_button.add_item(manufacturer)
 
-	# Populate design options
+	# Designoptionen füllen
 	for design in possible_designs:
 		design_button.add_item(design)
 
-	# Populate material options
+	# Materialoptionen füllen
 	for material in possible_materials:
 		material_button.add_item(material)
 
-# Function to update models based on selected manufacturer
+# Funktion zur Aktualisierung der Modelle basierend auf dem ausgewählten Hersteller
 func _on_manufacturer_selected(index: int):
-	manufacturer_var = $"MainVBox/ManufacturerHBox/Manufacturer".get_item_text(index)
-	update_models()
+	manufacturer_var = $"MainVBox/ManufacturerHBox/Manufacturer".get_item_text(index)  # Ausgewählten Hersteller speichern
+	update_models()  # Funktion zur Aktualisierung der Modelle aufrufen
 
 func update_models():
-	var model_button = $"MainVBox/ModelHBox/Model"
-	model_button.clear()
+	var model_button = $"MainVBox/ModelHBox/Model"  # Verweis auf den Modell-Options-Button
+	model_button.clear()  # Vorherige Modelle aus dem Button löschen
 	if manufacturer_var in manufacturers:
-		for model in manufacturers[manufacturer_var]:
+		for model in manufacturers[manufacturer_var]:  # Modelle des ausgewählten Herstellers hinzufügen
 			model_button.add_item(model)
 
-# Function to update the preview image based on selected options
+# Funktion zur Aktualisierung des Vorschaubilds basierend auf den ausgewählten Optionen
 func _on_design_selected(index: int):
-	design_var = $"MainVBox/DesignHBox/Design".get_item_text(index)
-	update_preview()
+	design_var = $"MainVBox/DesignHBox/Design".get_item_text(index)  # Ausgewähltes Design speichern
+	update_preview()  # Funktion zur Aktualisierung der Vorschau aufrufen
 
 func _on_material_selected(index: int):
-	material_var = $"MainVBox/MaterialHBox/Material".get_item_text(index)
-	update_preview()
+	material_var = $"MainVBox/MaterialHBox/Material".get_item_text(index)  # Ausgewähltes Material speichern
+	update_preview()  # Funktion zur Aktualisierung der Vorschau aufrufen
 
 func _on_image_selected(path: String):
-	custom_img = load(path)
-	update_preview()
+	custom_img = load(path)  # Benutzerdefiniertes Bild laden
+	update_preview()  # Funktion zur Aktualisierung der Vorschau aufrufen
 
 func update_preview():
-	# Example function to update the preview image
-	var preview_texture = $"/PreviewTexture"
+	# Beispielhafte Funktion zur Aktualisierung des Vorschaubilds
+	var preview_texture = $"/PreviewTexture"  # Verweis auf die Vorschaubild-Textur
 
-	# Placeholder logic to update preview based on selected design and material
-	# You should replace this with actual image loading logic based on your assets
+	# Platzhalter-Logik zur Aktualisierung der Vorschau basierend auf dem ausgewählten Design und Material
 	if design_var and material_var:
-		# Load images based on design_var and material_var
+		# Bilder basierend auf design_var und material_var laden
 		var design_image = load("res://design/" + design_var + ".png")
 		var material_image = load("res://material/" + material_var + ".png")
 		
-		# Composite the images if needed
-		# Update the preview texture
-		preview_texture.texture = design_image  # Replace this with actual composited image
+		# Bilder bei Bedarf zusammenführen
+		# Vorschaubild aktualisieren
+		preview_texture.texture = design_image  # Dies durch das tatsächlich zusammengesetzte Bild ersetzen
 
 func _on_place_order():
+	# E-Mail-Validierung
 	if not validate_email():
 		return
-	if manufacturer_var == "" or model_var == "":
+	if manufacturer_var == "" or model_var == "":  # Prüfen, ob Hersteller und Modell ausgewählt sind
 		show_error("Error", "The fields 'Manufacturer' and 'Model' cannot be empty. Please select a manufacturer and a model.")
 		return
 	
-	amount_var = int($"MainVBox/AmountHBox/Amount".text)
+	amount_var = int($"MainVBox/AmountHBox/Amount".text)  # Bestellmenge als Ganzzahl speichern
 	if amount_var <= 0:
 		show_error("Error", "Invalid amount. Must be greater than 0.")
 		return
@@ -133,15 +134,16 @@ func _on_place_order():
 			show_error("Error", "Invalid material. Please select a material from the list.")
 			return
 
-		var phone_model = manufacturer + " " + model
+		var phone_model = manufacturer + " " + model  # Telefonmodell-String erstellen
 		if phone_model in phone_orders:
 			phone_orders[phone_model].append([1, design, material])
 		else:
 			phone_orders[phone_model] = [[1, design, material]]
 
-	show_summary()
+	show_summary()  # Funktion zur Anzeige der Bestellübersicht aufrufen
 
 func validate_email() -> bool:
+	# E-Mail-Adresse validieren
 	var email = $"MainVBox/EmailHBox/Email".text
 	if not email_regex.match(email):
 		show_error("Error", "Invalid email address. Please try again.")
@@ -149,6 +151,7 @@ func validate_email() -> bool:
 	return true
 
 func show_summary():
+	# Bestellübersicht anzeigen
 	var summary = "Order Summary:\n"
 	for model in phone_orders.keys():
 		for order in phone_orders[model]:
@@ -157,33 +160,34 @@ func show_summary():
 			var material = order[2]
 			summary += model + ": " + str(amount) + " case(s) with design '" + design + "' made of '" + material + "' ordered.\n"
 	summary += "\nWe will send you a quote for your cases via email to " + $"MainVBox/EmailHBox/Email".text + "."
-	show_message("Order Summary", summary)
+	show_message("Order Summary", summary)  # Funktion zur Anzeige der Meldung aufrufen
 
 func show_error(title: String, message: String):
+	# Fehlerdialog anzeigen
 	var dialog = $ErrorDialog
-	dialog.dialog_text = message
-	dialog.popup_centered()
+	dialog.dialog_text = message  # Fehlernachricht setzen
+	dialog.popup_centered()  # Dialog zentriert auf dem Bildschirm anzeigen
 
 func show_message(_title: String, message: String):
+	# Meldungsdialog anzeigen
 	var dialog = $MessageDialog
-	dialog.dialog_text = message
-	dialog.popup_centered()
+	dialog.dialog_text = message  # Meldungsnachricht setzen
+	dialog.popup_centered()  # Dialog zentriert auf dem Bildschirm anzeigen
 
 func _on_save_orders():
-	# Implement save orders logic
+	# Logik zum Speichern von Bestellungen implementieren
 	pass
 
 func _on_load_orders():
-	# Implement load orders logic
+	# Logik zum Laden von Bestellungen implementieren
 	pass
 
 func _on_import_image():
+	# Bildimportdialog anzeigen
 	var dialog = FileDialog.new()
-	dialog.mode = "open_file"
-	dialog.access = "res"
-	dialog.add_filter("*.png;*.jpg;*.jpeg;*.bmp")
-	dialog.popup_centered()
-	dialog.connect("file_selected", self._on_image_selected)
-	add_child(dialog)
-
-
+	dialog.mode = "open_file"  # Dialog-Modus auf "Datei öffnen" setzen
+	dialog.access = "res"  # Zugriff auf Ressourcendateien erlauben
+	dialog.add_filter("*.png;*.jpg;*.jpeg;*.bmp")  # Dateifilter hinzufügen
+	dialog.popup_centered()  # Dialog zentriert auf dem Bildschirm anzeigen
+	dialog.connect("file_selected", self._on_image_selected)  # Verbindung zum Bildauswahl-Signal herstellen
+	add_child(dialog)  # Dialog als Kindknoten hinzufügen
