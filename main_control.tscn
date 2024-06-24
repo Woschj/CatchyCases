@@ -1,0 +1,150 @@
+[gd_scene load_steps=3 format=3 uid="uid://c26s0yr83yfa7"]
+
+[ext_resource type="Script" path="res://main_control.gd" id="1_ycmcv"]
+[ext_resource type="Texture2D" uid="uid://crti2aw3mcj7b" path="res://CC_Logo_Wortmarke.jpg" id="2_4luum"]
+
+[node name="MainControl" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 436.0
+offset_top = 2.0
+offset_right = 436.0
+offset_bottom = 2.0
+scale = Vector2(1, 1.20533)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_ycmcv")
+
+[node name="Buttons" type="HBoxContainer" parent="."]
+layout_mode = 2
+offset_left = -414.0
+offset_top = 497.789
+offset_right = 188.0
+offset_bottom = 528.789
+
+[node name="ImportImageButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "Eigenes Motiv Hoc"
+
+[node name="PlaceOrderButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "Bestellen
+"
+
+[node name="SaveOrdersButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "Konfiguration speichern"
+
+[node name="LoadOrdersButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "Konfiguration Laden"
+
+[node name="PreviewTexture" type="TextureRect" parent="."]
+layout_mode = 1
+offset_left = -132.0
+offset_top = 6.63717
+offset_right = 68.0
+offset_bottom = 196.637
+scale = Vector2(1.61002, 2.06531)
+auto_translate = false
+localize_numeral_system = false
+expand_mode = 2
+
+[node name="MainVBox" type="VBoxContainer" parent="."]
+clip_children = 1
+layout_direction = 2
+layout_mode = 0
+offset_left = -425.0
+offset_top = 20.7412
+offset_right = -228.0
+offset_bottom = 209.741
+scale = Vector2(1.22132, 1.01268)
+focus_mode = 1
+alignment = 1
+
+[node name="EmailHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainVBox/EmailHBox"]
+layout_mode = 2
+text = "E-Mail"
+
+[node name="Email" type="LineEdit" parent="MainVBox/EmailHBox"]
+layout_mode = 2
+
+[node name="ManufacturerHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainVBox/ManufacturerHBox"]
+layout_mode = 2
+text = "Hersteller
+"
+
+[node name="Manufacturer" type="OptionButton" parent="MainVBox/ManufacturerHBox"]
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Apple"
+popup/item_0/id = 0
+popup/item_1/text = "Samsung"
+popup/item_1/id = 1
+
+[node name="ModelHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainVBox/ModelHBox"]
+layout_mode = 2
+text = "Modell
+"
+
+[node name="Model" type="OptionButton" parent="MainVBox/ModelHBox"]
+layout_mode = 2
+
+[node name="DesignHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainVBox/DesignHBox"]
+layout_mode = 2
+text = "Design"
+
+[node name="Design" type="OptionButton" parent="MainVBox/DesignHBox"]
+layout_mode = 2
+
+[node name="MaterialHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainVBox/MaterialHBox"]
+layout_mode = 2
+text = "Material"
+
+[node name="Material" type="OptionButton" parent="MainVBox/MaterialHBox"]
+layout_mode = 2
+
+[node name="AmountHBox" type="HBoxContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainVBox/AmountHBox"]
+layout_mode = 2
+text = "Bestellmenge"
+
+[node name="Amount" type="LineEdit" parent="MainVBox/AmountHBox"]
+layout_mode = 2
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="CcLogoWortmarke" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.184314)
+self_modulate = Color(1, 1, 1, 0.443137)
+show_behind_parent = true
+visibility_layer = 513
+position = Vector2(132, 268.806)
+scale = Vector2(0.261382, 0.225883)
+texture = ExtResource("2_4luum")
+
+[connection signal="pressed" from="Buttons/ImportImageButton" to="." method="_on_import_image"]
+[connection signal="pressed" from="Buttons/PlaceOrderButton" to="." method="_on_place_orders"]
+[connection signal="pressed" from="Buttons/SaveOrdersButton" to="." method="_on_save_orders"]
+[connection signal="pressed" from="Buttons/LoadOrdersButton" to="." method="_on_load_orders"]
+[connection signal="item_selected" from="MainVBox/ManufacturerHBox/Manufacturer" to="." method="_on_manufacturer_selected"]
+[connection signal="item_selected" from="MainVBox/ModelHBox/Model" to="." method="_on_model_selected"]
+[connection signal="item_selected" from="MainVBox/DesignHBox/Design" to="." method="_on_design_selected"]
+[connection signal="item_selected" from="MainVBox/MaterialHBox/Material" to="." method="_on_material_selected"]
