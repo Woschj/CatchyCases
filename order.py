@@ -146,7 +146,17 @@ class PhoneCaseOrderSystem:
             filepath = os.path.join("imports", selected_image)
             self.custom_img = Image.open(filepath).convert("RGBA")
             self.custom_img.thumbnail(self.custom_img_size, Image.LANCZOS)
-            self.update_preview()
+        else:
+            self.custom_img = None
+        self.update_preview()
+
+    def move_custom_image(self, dx: int, dy: int) -> None:
+        self.custom_img_position = (self.custom_img_position[0] + dx, self.custom_img_position[1] + dy)
+        self.update_preview()
+
+    def scale_custom_image(self, scale_factor: float) -> None:
+        self.custom_img_scale *= scale_factor
+        self.update_preview()
 
     def update_preview(self, event: Optional[tk.Event] = None) -> None:
         try:
@@ -198,13 +208,17 @@ class PhoneCaseOrderSystem:
                 final_image.convert("RGB").save(filepath, "JPEG")
 
     def move_custom_image(self, dx: int, dy: int) -> None:
-        self.custom_img_position = (self.custom_img_position[0] + dx, self.custom_img_position[1] + dy)
+        new_position = (self.custom_img_position[0] + dx, self.custom_img_position[1] + dy)
+        max_x = self.custom_img_size[0] - int(self.custom_img.width * self.custom_img_scale)
+        max_y = self.custom_img_size[1] - int(self.custom_img.height * self.custom_img_scale)
+        new_position = (max(0, min(new_position[0], max_x)), max(0, min(new_position[1], max_y)))
+        self.custom_img_position = new_position
         self.update_preview()
 
     def scale_custom_image(self, scale_factor: float) -> None:
         self.custom_img_scale *= scale_factor
         self.update_preview()
-
+        
 if __name__ == "__main__":
     root = tk.Tk()
     app = PhoneCaseOrderSystem(root)
